@@ -88,7 +88,7 @@
     </div>
 
     <el-dialog
-      title="打印机"
+      title="打印机列表"
       :visible="showPrinterList"
       width="80vw"
       :before-close="() => (showPrinterList = false)"
