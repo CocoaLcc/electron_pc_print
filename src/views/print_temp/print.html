@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="https://cdn.bootcss.com/vue/2.2.2/vue.min.js"></script>
+    <title>Document</title>
+    <style>
+      @page {
+        margin: 0;
+      }
+      .ticket-con {
+        width: 220px;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      .product-cell {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 8px;
+        margin-top: 8px;
+        border-bottom-style: dotted;
+        padding-bottom: 8px;
+      }
+      .product-info {
+        display: flex;
+        flex-direction: column;
+      }
+      .ticket-total-price {
+        font-size: 18px;
+        font-weight: 500;
+        margin-top: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="ticket-con">
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: flex-start;
+          "
+        >
+          <div style="font-size: 36px; font-weight: 700">
+            {{ dataDic.pick_code }}
+          </div>
+        </div>
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-between;
+            font-size: 16px;
+            margin-top: 6px;
+          "
+        >
+          <div>自提时间：</div>
+          <div>{{ dataDic.pick_time }}</div>
+        </div>
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-between;
+            font-size: 16px;
+            margin-top: 6px;
+          "
+        >
+          <div>姓名：</div>
+          <div>{{ dataDic.username }}</div>
+        </div>
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-between;
+            font-size: 16px;
+            margin-top: 6px;
+          "
+        >
+          <div>电话：</div>
+          <div>{{ dataDic.mobile }}</div>
+        </div>
+        <div
+          style="
+            margin-top: 12px;
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-between;
+            font-size: 20px;
+            font-weight: 500;
+          "
+        >
+          <div>商品</div>
+          <div style="display: flex; flex-direction: row">
+            <div style="margin-right: 28px">数量</div>
+            <div>价格</div>
+          </div>
+        </div>
+
+        <div
+          class="product-cell"
+          v-for="(item, index) in dataDic.product"
+          :key="'product' + index"
+        >
+          <div class="product-info">
+            <div style="font-size: 16px; font-weight: 500">{{ item.name }}</div>
+            <div style="font-size: 12px; margin-top: 5px">
+              {{ item.specifications.join("，") }}
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: row">
+            <div
+              style="
+                font-size: 16px;
+                width: 40px;
+                margin-right: 26px;
+                text-align: center;
+              "
+            >
+              {{ item.num }}
+            </div>
+            <div style="font-size: 16px; width: 50px; text-align: center">
+              {{ item.pay_price }}
+            </div>
+          </div>
+        </div>
+        <div class="ticket-total-price" style="margin-top: 12px">
+          总价：{{ dataDic.finally_price }}
+        </div>
+        <div class="ticket-total-price" style="margin-top: 4px">
+          支付方式：{{ dataDic.channel == 1 ? "内部福利卡" : dataDic.channel ==
+          2 ? "公司签单" : "微信支付" }}
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    //引入ipcRenderer对象
+    // import { ipcRenderer } from "electron";
+    const { ipcRenderer } = require("electron");
+    new Vue({
+      el: "#app",
+      data: {
+        dataDic: {},
+      },
+      mounted() {
+        console.log("print 模板渲染完成");
+        ipcRenderer.on("ping", (e, data) => {
+          //接收响应
+          this.dataDic = data;
+          console.log("打印模板 接受数据 ==>> " + JSON.stringify(data));
+          ipcRenderer.sendToHost("pong"); //向webview所在页面的进程传达消息
+        });
+      },
+      methods: {},
+    });
+  </script>
+</html>
